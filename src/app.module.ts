@@ -28,6 +28,7 @@ import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { AllConfigType } from './config/config.type';
+import swaggerConfig from './config/swagger.config';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AllConfigType } from './config/config.type';
         googleConfig,
         twitterConfig,
         appleConfig,
+        swaggerConfig,
       ],
       envFilePath: ['.env'],
     }),

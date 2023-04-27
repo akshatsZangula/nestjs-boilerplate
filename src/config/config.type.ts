@@ -36,6 +36,14 @@ export type DatabaseConfig = {
   cert?: string;
 };
 
+export type SwaggerConfig = {
+  enabled?: boolean;
+  route?: string;
+  username?: string;
+  password?: string;
+  port?: number;
+}
+
 export type FacebookConfig = {
   appId?: string;
   appSecret?: string;
@@ -83,4 +91,5 @@ export type AllConfigType = {
   google: GoogleConfig;
   mail: MailConfig;
   twitter: TwitterConfig;
+  swagger: SwaggerConfig;
 };
