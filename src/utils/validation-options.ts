@@ -7,12 +7,11 @@ import {
 
 const validationOptions: ValidationPipeOptions = {
   transform: true,
-  whitelist: true,
-  errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
   exceptionFactory: (errors: ValidationError[]) =>
     new HttpException(
       {
-        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        disableErrorMessages: true,
+        status: HttpStatus.BAD_REQUEST,
         errors: errors.reduce(
           (accumulator, currentValue) => ({
             ...accumulator,
@@ -23,7 +22,7 @@ const validationOptions: ValidationPipeOptions = {
           {},
         ),
       },
-      HttpStatus.UNPROCESSABLE_ENTITY,
+      HttpStatus.BAD_REQUEST,
     ),
 };
 
