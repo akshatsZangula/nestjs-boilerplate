@@ -22,14 +22,15 @@ import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
+import { AccessGuard } from 'src/common/guards/access.guard';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { User } from './entities/user.entity';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { NullableType } from '../utils/types/nullable.type';
+import { Authorized } from 'src/auth/auth.decorator';
 
 @ApiBearerAuth()
-@Roles(RoleEnum.admin)
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Authorized()
 @ApiTags('Users')
 @Controller({
   path: 'users',
@@ -38,6 +39,8 @@ import { NullableType } from '../utils/types/nullable.type';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Roles(RoleEnum.admin)
+  @UseGuards(RolesGuard)
   @SerializeOptions({
     groups: ['admin'],
   })
@@ -90,6 +93,7 @@ export class UsersController {
     return this.usersService.update(id, updateProfileDto);
   }
 
+  @UseGuards(AccessGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: number): Promise<void> {

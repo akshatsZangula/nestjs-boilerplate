@@ -16,16 +16,14 @@ export class AuthGuard implements CanActivate {
             context.getClass(),
             context.getHandler(),
         ]);
-        const {
-            headers,
-        } = context.switchToHttp().getRequest();
+        const request = context.switchToHttp().getRequest();
 
         
         if (isAuthRequired === undefined || (isAuthRequired !== undefined && !isAuthRequired)) {
             return true;
         }
 
-        const jwtToken = this.extractJWTFromHeaders(headers);
+        const jwtToken = this.extractJWTFromHeaders(request.headers);
         try {
             const payload = this.jwtService.verify(
                 jwtToken,
@@ -33,13 +31,11 @@ export class AuthGuard implements CanActivate {
                     secret: this.configService.get('auth.secret')
                 },
             );
-            // attach this payload to some object
+            request.user = payload;
+            return true;
         } catch (e) {
-            console.log(e);
             throw new UnauthorizedException();
         }
-        
-        return false;
     }
 
     extractJWTFromHeaders(requestHeaders): string {
