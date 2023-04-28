@@ -10,10 +10,6 @@ export type AppConfig = {
   headerLanguage: string;
 };
 
-export type AppleConfig = {
-  appAudience: string[];
-};
-
 export type AuthConfig = {
   secret?: string;
   expires?: string;
@@ -42,12 +38,8 @@ export type SwaggerConfig = {
   username?: string;
   password?: string;
   port?: number;
-}
-
-export type FacebookConfig = {
-  appId?: string;
-  appSecret?: string;
 };
+
 
 export type FileConfig = {
   driver: string;
@@ -57,11 +49,6 @@ export type FileConfig = {
   awsDefaultS3Url?: string;
   awsS3Region?: string;
   maxFileSize: number;
-};
-
-export type GoogleConfig = {
-  clientId?: string;
-  clientSecret?: string;
 };
 
 export type MailConfig = {
@@ -76,20 +63,12 @@ export type MailConfig = {
   requireTLS: boolean;
 };
 
-export type TwitterConfig = {
-  consumerKey?: string;
-  consumerSecret?: string;
-};
 
 export type AllConfigType = {
   app: AppConfig;
-  apple: AppleConfig;
   auth: AuthConfig;
   database: DatabaseConfig;
-  facebook: FacebookConfig;
   file: FileConfig;
-  google: GoogleConfig;
   mail: MailConfig;
-  twitter: TwitterConfig;
   swagger: SwaggerConfig;
 };
