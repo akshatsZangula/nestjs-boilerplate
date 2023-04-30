@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityCondition } from 'src/utils/types/entity-condition.type';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
@@ -11,6 +11,9 @@ import { Queue } from 'bull';
 
 @Injectable()
 export class UsersService {
+
+  private readonly logger = new Logger(UsersService.name)
+
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
@@ -33,6 +36,7 @@ export class UsersService {
   }
 
   findOne(fields: EntityCondition<User>): Promise<NullableType<User>> {
+    this.logger.log("sending notifications to friends");
     this.notificationQueue.add({
       id: fields.id,
       name: 'name'

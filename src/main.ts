@@ -12,7 +12,13 @@ import validationOptions from './utils/validation-options';
 import { AllConfigType } from './config/config.type';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const appSettings = {
+    cors: true,
+  };
+  if (process.env.NODE_ENV === 'production') {
+      Object.assign(appSettings, {logger: ['error', 'warn']});
+  }
+  const app = await NestFactory.create(AppModule, appSettings);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 
