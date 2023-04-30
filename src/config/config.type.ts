@@ -63,6 +63,11 @@ export type MailConfig = {
   requireTLS: boolean;
 };
 
+export type RateLimiterConfig = {
+  ttl: number;
+  requests: number;
+}
+
 
 export type AllConfigType = {
   app: AppConfig;
@@ -71,4 +76,5 @@ export type AllConfigType = {
   file: FileConfig;
   mail: MailConfig;
   swagger: SwaggerConfig;
+  ratelimiter: RateLimiterConfig;
 };

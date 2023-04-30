@@ -7,6 +7,7 @@ import {
 
 const validationOptions: ValidationPipeOptions = {
   transform: true,
+  whitelist: true,
   exceptionFactory: (errors: ValidationError[]) =>
     new HttpException(
       {

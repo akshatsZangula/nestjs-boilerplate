@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityCondition } from 'src/utils/types/entity-condition.type';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
@@ -6,12 +6,15 @@ import { DeepPartial, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { NullableType } from '../utils/types/nullable.type';
+import { InjectQueue, getQueueToken } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectQueue('notifications') private notificationQueue: Queue
   ) {}
 
   create(createProfileDto: CreateUserDto): Promise<User> {
@@ -30,6 +33,10 @@ export class UsersService {
   }
 
   findOne(fields: EntityCondition<User>): Promise<NullableType<User>> {
+    this.notificationQueue.add({
+      id: fields.id,
+      name: 'name'
+    })
     return this.usersRepository.findOne({
       where: fields,
     });

@@ -28,6 +28,7 @@ import { User } from './entities/user.entity';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { NullableType } from '../utils/types/nullable.type';
 import { Authorized } from 'src/auth/auth.decorator';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiBearerAuth()
 @Authorized()
@@ -74,8 +75,8 @@ export class UsersController {
 
   @SerializeOptions({
     groups: ['admin'],
-  })
-  @Get(':id')
+  })  
+@Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string): Promise<NullableType<User>> {
     return this.usersService.findOne({ id: +id });
@@ -94,9 +95,10 @@ export class UsersController {
   }
 
   @UseGuards(AccessGuard)
+  @Throttle(1,20)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id') id: number) {
     return this.usersService.softDelete(id);
   }
 }

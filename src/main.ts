@@ -29,19 +29,21 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  if (configService.get('swagger.enabled', {infer: true})) {
-    const swaggerDocsRoute = configService.get('swagger.route', {infer: true})
+  if (configService.get('swagger.enabled', { infer: true })) {
+    const swaggerDocsRoute = configService.get('swagger.route', {
+      infer: true,
+    });
     const options = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API docs')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+      .setTitle('API')
+      .setDescription('API docs')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
 
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup(swaggerDocsRoute ?? 'docs', app, document);
   }
- 
+
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
 void bootstrap();
