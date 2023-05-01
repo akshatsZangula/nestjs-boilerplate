@@ -10,3 +10,5 @@
 - [Auth](auth.md)
 - [Serialization](serialization.md)
 - [File uploading](file-uploading.md)
+- [Instructions/Samples](instructions.md)
+

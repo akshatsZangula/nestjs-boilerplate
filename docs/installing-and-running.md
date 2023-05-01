@@ -97,7 +97,8 @@ If you want quick run your app, you can use following commands:
 
 ## Links
 
-- Swagger (API docs): http://localhost:3000/docs
+- Swagger (API docs): http://localhost:3000/swagger
+- Bull Dashboard ( Worker Monitoring): http://localhost:3000/api/admin/queues
 - Adminer (client for DB): http://localhost:8080
 - Maildev: http://localhost:1080
 
