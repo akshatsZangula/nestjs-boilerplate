@@ -7,18 +7,10 @@ import authConfig from './config/auth.config';
 import appConfig from './config/app.config';
 import mailConfig from './config/mail.config';
 import fileConfig from './config/file.config';
-import facebookConfig from './config/facebook.config';
-import googleConfig from './config/google.config';
-import twitterConfig from './config/twitter.config';
-import appleConfig from './config/apple.config';
 import * as path from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthAppleModule } from './auth-apple/auth-apple.module';
-import { AuthFacebookModule } from './auth-facebook/auth-facebook.module';
-import { AuthGoogleModule } from './auth-google/auth-google.module';
-import { AuthTwitterModule } from './auth-twitter/auth-twitter.module';
 import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
 import { HeaderResolver } from 'nestjs-i18n';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
@@ -28,6 +20,13 @@ import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { AllConfigType } from './config/config.type';
+import swaggerConfig from './config/swagger.config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/auth.guard';
+import { JwtService } from '@nestjs/jwt';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { BullModule } from '@nestjs/bull';
+import { WorkerModule } from './common/workers/worker.module';
 
 @Module({
   imports: [
@@ -39,10 +38,7 @@ import { AllConfigType } from './config/config.type';
         appConfig,
         mailConfig,
         fileConfig,
-        facebookConfig,
-        googleConfig,
-        twitterConfig,
-        appleConfig,
+        swaggerConfig,
       ],
       envFilePath: ['.env'],
     }),
@@ -78,13 +74,38 @@ import { AllConfigType } from './config/config.type';
     UsersModule,
     FilesModule,
     AuthModule,
-    AuthFacebookModule,
-    AuthGoogleModule,
-    AuthTwitterModule,
-    AuthAppleModule,
     ForgotModule,
     MailModule,
     HomeModule,
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        ttl: config.get('ratelimiter.ttl'),
+        limit: config.get('ratelimiter.requests'),
+      }),
+    }),
+    BullModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('worker.host'),
+          port: configService.get('worker.port'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    WorkerModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    JwtService,
   ],
 })
 export class AppModule {}
