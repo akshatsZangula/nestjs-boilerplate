@@ -13,6 +13,8 @@ import {
   HttpStatus,
   HttpCode,
   SerializeOptions,
+  Logger,
+  Version,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -47,9 +49,24 @@ export class UsersController {
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createProfileDto: CreateUserDto): Promise<User> {
+  createV1(@Body() createProfileDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createProfileDto);
   }
+
+
+
+  @Roles(RoleEnum.admin)
+  @UseGuards(RolesGuard)
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @Version('2')
+  createV2(@Body() createProfileDto: CreateUserDto): Promise<User> {
+    return this.usersService.create(createProfileDto);
+  }
+
 
   @SerializeOptions({
     groups: ['admin'],
@@ -74,9 +91,9 @@ export class UsersController {
   }
 
   @SerializeOptions({
-    groups: ['admin'],
+    groups: ['admin', ],
   })  
-@Get(':id')
+  @Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string): Promise<NullableType<User>> {
     return this.usersService.findOne({ id: +id });
