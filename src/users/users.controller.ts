@@ -53,8 +53,6 @@ export class UsersController {
     return this.usersService.create(createProfileDto);
   }
 
-
-
   @Roles(RoleEnum.admin)
   @UseGuards(RolesGuard)
   @SerializeOptions({
@@ -66,7 +64,6 @@ export class UsersController {
   createV2(@Body() createProfileDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createProfileDto);
   }
-
 
   @SerializeOptions({
     groups: ['admin'],
@@ -91,8 +88,8 @@ export class UsersController {
   }
 
   @SerializeOptions({
-    groups: ['admin', ],
-  })  
+    groups: ['admin'],
+  })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string): Promise<NullableType<User>> {
@@ -112,7 +109,7 @@ export class UsersController {
   }
 
   @UseGuards(AccessGuard)
-  @Throttle(1,20)
+  @Throttle(1, 20)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: number) {
