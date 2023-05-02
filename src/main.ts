@@ -15,9 +15,12 @@ async function bootstrap() {
   const appSettings = {
     cors: true,
   };
-  if (process.env.NODE_ENV === 'production') {
-      Object.assign(appSettings, {logger: ['error', 'warn']});
+
+  // set logger levels by environment
+  if (process.env.LOG_LEVELS !== undefined) {
+    Object.assign(appSettings, {logger: process.env.LOG_LEVELS.split('::')});
   }
+
   const app = await NestFactory.create(AppModule, appSettings);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
