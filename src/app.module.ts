@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
@@ -27,7 +27,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
 import { WorkerModule } from './common/workers/worker.module';
-
 
 @Module({
   imports: [
@@ -84,13 +83,16 @@ import { WorkerModule } from './common/workers/worker.module';
       useFactory: (config: ConfigService) => ({
         ttl: config.get('ratelimiter.ttl'),
         limit: config.get('ratelimiter.requests'),
-      })
+      }),
     }),
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      },
+    BullModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('worker.host'),
+          port: configService.get('worker.port'),
+        },
+      }),
+      inject: [ConfigService],
     }),
     WorkerModule,
   ],
@@ -104,6 +106,6 @@ import { WorkerModule } from './common/workers/worker.module';
       useClass: AuthGuard,
     },
     JwtService,
-  ]
+  ],
 })
 export class AppModule {}

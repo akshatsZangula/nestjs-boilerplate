@@ -40,7 +40,6 @@ export type SwaggerConfig = {
   port?: number;
 };
 
-
 export type FileConfig = {
   driver: string;
   accessKeyId?: string;
@@ -66,8 +65,17 @@ export type MailConfig = {
 export type RateLimiterConfig = {
   ttl: number;
   requests: number;
-}
+};
 
+export type DashboardConfig = {
+  username: string;
+  password: string;
+};
+
+export type WorkerConfig = {
+  host: string;
+  port: number;
+};
 
 export type AllConfigType = {
   app: AppConfig;
@@ -77,4 +85,6 @@ export type AllConfigType = {
   mail: MailConfig;
   swagger: SwaggerConfig;
   ratelimiter: RateLimiterConfig;
+  dashboard: DashboardConfig;
+  worker: WorkerConfig;
 };
